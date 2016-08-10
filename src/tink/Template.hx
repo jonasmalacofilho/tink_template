@@ -33,8 +33,11 @@ class Template {
   }
   
   static function use() {
-      
+
     SyntaxHub.classLevel.before('tink.lang.', function (c:ClassBuilder) {
+      if (Context.defined("tink_template_filter_classes") && !(c.target.meta.has(":template") || c.target.meta.has(":hasTemplates")))
+        return false;
+      
       var changed = false;
       function addDependency(file:String) {
         Context.registerModuleDependency(
@@ -103,7 +106,7 @@ class Template {
             addDependency(v[0].file);
         }        
       }
-      
+
       for (member in c)
         switch member.extractMeta(':template') {
           case Success( { params: [] } ):
